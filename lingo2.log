@@ -1,0 +1,271 @@
+  LINGO/WIN64 13.0.2.21 (16 Jul 13)
+ 
+  LINDO API 7.0.1.558 (Jun 24 2013 21:55:10)
+ 
+  Copyright (C) 2005-2011 LINDO Systems Inc. Licensed material,
+  all rights reserved. Copying except as authorized in license
+  agreement is prohibited.
+ 
+  License location: F:\LINGO64_13\lndlng13.lic
+ 
+  Eval Use Only
+ 
+  License expires: 14 Mar 2014
+ 
+  Licensed for commercial use.
+  Branch-and-bound solver enabled.
+  Nonlinear solver enabled.
+  Barrier solver enabled.
+  Global solver enabled.
+  Integer solver enabled.
+  Stochastic solver enabled.
+  Conic solver enabled.
+ 
+ 
+   Parameter        Old Value     New Value
+    ECHOIN             0             1
+ 
+: TAKE WebContent\lingo-model-file\HRdispatch_planning_mdl.lng
+: MODEL:
+? SETS:
+?   kind: salary,
+?         recruit_cost,
+?         job_working_hour,
+?         staff_require_number,
+?         staff_inventory_number,
+?         job_duration,
+?         need_recruit,
+?         monthly_working_hours;
+?   project: revenue,
+?            fixed_cost,
+?            manage_cost;
+? ENDSETS
+?   [objective] min = @sum(project(t):fixed_cost(t)) +
+?   @sum(kind(i):
+?   job_duration(i)*
+?   staff_require_number(i)*
+?   salary(i)
+?   ) +
+?   @sum(kind(i):staff_require_number(i))*@sum(project(t):manage_cost(t)) +
+?   @sum(kind(i):
+?   need_recruit(i)*
+?   recruit_cost(i)*
+?   (staff_require_number(i)-
+?   staff_inventory_number(i))
+?   );
+?   @for(project(t):
+?   fixed_cost(t) + @sum(kind(i):
+?     job_duration(i)*
+?     staff_require_number(i)*
+?     salary(i)
+?   ) +
+?   @sum(kind(i):staff_require_number(i))*manage_cost(t) +
+?   @sum(kind(i):
+?     need_recruit(i)*
+?     recruit_cost(i)*(staff_require_number(i)-staff_inventory_number(i))
+?   ) <= revenue(t)
+?   );
+?   @for(kind(i):job_duration(i)*
+?     staff_require_number(i)*
+?     monthly_working_hours(i)
+?     >= job_working_hour(i)
+?   );
+?   @for(kind(i):(need_recruit(i)-0.5)*
+?     (staff_require_number(i)-
+?     staff_inventory_number(i)-0.5)
+?     >= 0
+?   ) ;
+?   @for(kind(i):@gin(staff_require_number(i)));
+?   @for(kind(i):@bin(need_recruit(i)));
+? data:
+?  ! number_of_kind=2;
+?  !kind = oracle java;
+?  kind = @pointer( 1);
+?  !project = project_1;
+?  project = @pointer( 2);
+?  !revenue = 1000000;
+?  revenue = @pointer( 3);
+?  !fixed_cost = 20000;
+?  fixed_cost = @pointer( 4);
+?  !manage_cost = 2000;
+?  manage_cost = @pointer( 5);
+?  !salary = 20000 10000;
+?  salary = @pointer( 6);
+?  !recruit_cost = 3000 3000;
+?  recruit_cost = @pointer( 7);
+?  !job_working_hour = 1200 2400;
+?  job_working_hour  = @pointer( 8);
+? ! staff_inventory_number = 2 10;
+?  staff_inventory_number = @pointer( 9);
+?  !job_duration = 3 3;
+?  job_duration = @pointer( 10);
+?  !monthly_working_hours = 160 160;
+?  monthly_working_hours = @pointer( 11);
+?  @pointer( 12) = objective;
+?  @pointer( 13) = staff_require_number;
+?  @pointer( 14) = need_recruit;
+?  @pointer( 15) = @status();
+?  !total_working_hours = 2400;
+? enddata
+? end
+: LOOK ALL
+ 
+ 1]SETS:
+ 2]  kind: salary,
+ 3]        recruit_cost,
+ 4]        job_working_hour,
+ 5]        staff_require_number,
+ 6]        staff_inventory_number,
+ 7]        job_duration,
+ 8]        need_recruit,
+ 9]        monthly_working_hours;
+10]  project: revenue,
+11]           fixed_cost,
+12]           manage_cost;
+13]ENDSETS
+14]  [objective] min = @sum(project(t):fixed_cost(t)) +
+15]  @sum(kind(i):
+16]  job_duration(i)*
+17]  staff_require_number(i)*
+18]  salary(i)
+19]  ) +
+20]  @sum(kind(i):staff_require_number(i))*@sum(project(t):manage_cost(t)) +
+21]  @sum(kind(i):
+22]  need_recruit(i)*
+23]  recruit_cost(i)*
+24]  (staff_require_number(i)-
+25]  staff_inventory_number(i))
+26]  );
+27]
+28]  @for(project(t):
+29]  fixed_cost(t) + @sum(kind(i):
+30]    job_duration(i)*
+31]    staff_require_number(i)*
+32]    salary(i)
+33]  ) +
+34]  @sum(kind(i):staff_require_number(i))*manage_cost(t) +
+35]  @sum(kind(i):
+36]    need_recruit(i)*
+37]    recruit_cost(i)*(staff_require_number(i)-staff_inventory_number(i))
+38]  ) <= revenue(t)
+39]  );
+40]
+41]  @for(kind(i):job_duration(i)*
+42]    staff_require_number(i)*
+43]    monthly_working_hours(i)
+44]    >= job_working_hour(i)
+45]  );
+46]
+47]  @for(kind(i):(need_recruit(i)-0.5)*
+48]    (staff_require_number(i)-
+49]    staff_inventory_number(i)-0.5)
+50]    >= 0
+51]  ) ;
+52]
+53]  @for(kind(i):@gin(staff_require_number(i)));
+54]
+55]  @for(kind(i):@bin(need_recruit(i)));
+56]
+57]data:
+58] ! number_of_kind=2;
+59] !kind = oracle java;
+60] kind = @pointer( 1);
+61] !project = project_1;
+62] project = @pointer( 2);
+63]
+64] !revenue = 1000000;
+65] revenue = @pointer( 3);
+66] !fixed_cost = 20000;
+67] fixed_cost = @pointer( 4);
+68] !manage_cost = 2000;
+69] manage_cost = @pointer( 5);
+70]
+71] !salary = 20000 10000;
+72] salary = @pointer( 6);
+73] !recruit_cost = 3000 3000;
+74] recruit_cost = @pointer( 7);
+75] !job_working_hour = 1200 2400;
+76] job_working_hour  = @pointer( 8);
+77]! staff_inventory_number = 2 10;
+78] staff_inventory_number = @pointer( 9);
+79] !job_duration = 3 3;
+80] job_duration = @pointer( 10);
+81] !monthly_working_hours = 160 160;
+82] monthly_working_hours = @pointer( 11);
+83]
+84] @pointer( 12) = objective;
+85]
+86] @pointer( 13) = staff_require_number;
+87]
+88] @pointer( 14) = need_recruit;
+89]
+90] @pointer( 15) = @status();
+91]
+92] !total_working_hours = 2400;
+93]
+94]enddata
+ 
+: GO
+  Compiling model ...
+  Structural analysis, pass 1 ...
+  Scalarizing model ...
+  Generating nonzero matrix ...
+  Solving...
+  Running dual solver...
+  Linearization components added:
+      Constraints:          24
+      Variables:             6
+ 
+ 
+  Global optimal solution found.
+  Objective value:                              839000.0
+  Objective bound:                              839000.0
+  Infeasibilities:                              0.000000
+  Extended solver steps:                               0
+  Total solver iterations:                             0
+ 
+  Running output operations ...
+ 
+  Model Class:                                      MILP
+ 
+  Total variables:                     10
+  Nonlinear variables:                  0
+  Integer variables:                    4
+ 
+  Total constraints:                   30
+  Nonlinear constraints:                0
+ 
+  Total nonzeros:                      80
+  Nonlinear nonzeros:                   0
+ 
+ 
+                                Variable           Value        Reduced Cost
+                       SALARY( 50000003)        10000.00            0.000000
+                       SALARY( 50000005)        20000.00            0.000000
+                 RECRUIT_COST( 50000003)        3000.000            0.000000
+                 RECRUIT_COST( 50000005)        3000.000            0.000000
+             JOB_WORKING_HOUR( 50000003)        4800.000            0.000000
+             JOB_WORKING_HOUR( 50000005)        2400.000            0.000000
+         STAFF_REQUIRE_NUMBER( 50000003)        10.00000            32000.00
+         STAFF_REQUIRE_NUMBER( 50000005)        5.000000            65000.00
+       STAFF_INVENTORY_NUMBER( 50000003)        10.00000            0.000000
+       STAFF_INVENTORY_NUMBER( 50000005)        2.000000            0.000000
+                 JOB_DURATION( 50000003)        3.000000            0.000000
+                 JOB_DURATION( 50000005)        3.000000            0.000000
+                 NEED_RECRUIT( 50000003)        0.000000           -30000.00
+                 NEED_RECRUIT( 50000005)        1.000000           0.2999940E+09
+        MONTHLY_WORKING_HOURS( 50000003)        160.0000            0.000000
+        MONTHLY_WORKING_HOURS( 50000005)        160.0000            0.000000
+                      REVENUE( 10101010)        1000000.            0.000000
+                   FIXED_COST( 10101010)        200000.0            0.000000
+                  MANAGE_COST( 10101010)        2000.000            0.000000
+ 
+                                     Row    Slack or Surplus      Dual Price
+                               OBJECTIVE        839000.0           -1.000000
+                                       2        161000.0            0.000000
+                                       3        0.000000            0.000000
+                                       4        0.000000            0.000000
+                                       5       0.2500000            0.000000
+                                       6        1.250000            0.000000
+ 
+: QUIT

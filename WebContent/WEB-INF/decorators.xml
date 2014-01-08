@@ -1,0 +1,12 @@
+<decorators defaultdir="/ecps/console/decorators">
+    <excludes>
+    	<pattern>*/login.jsp</pattern>
+        <pattern>/40*.jsp</pattern>
+        <pattern>/*ajax=true*</pattern>
+        <pattern>/resources/*</pattern>
+      	<!-- Ajax等以其他异步请求 -->
+    </excludes> 
+    <decorator name="default" page="/resources/common/default.jsp">
+        <pattern>/*</pattern>
+    </decorator>
+</decorators>
